@@ -4,7 +4,7 @@
 # PodcastArchiver
 Do you want to save a podcast to your local machine? Maybe you are canceling your podcast service subscription but you don't want to permanently lose all your episodes. Maybe a podcast is getting canceled and you want to save the content. Or maybe you just want to archive a show for the future!
 
-This program will download the RSS feed, cover art, and all the episode audio files. It will then make a simple website from the titles and descriptions of the show itself and the episodes. The website has simple relative links to it can be used on a machine with no web server. Just open an .html file in the browser. The program also compresses everything in a nice tar ball for achieving.
+This program will download the RSS feed, cover art, and all the episode audio files. It will then make a simple website from the titles and descriptions of the show itself and the episodes. The website has simple relative links to it can be used on a machine with no web server. Just open an .html file in the browser. The program also compresses everything in a nice tar ball.
 
 ##  Requirements
 
