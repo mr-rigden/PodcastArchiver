@@ -11,8 +11,15 @@ import requests
 from slugify import slugify
 import xmltodict
 
+import logging
+import logging
+
+log_format = "%(message)s"
+logging.basicConfig(level=logging.INFO, format=log_format)
+logger = logging.getLogger(__name__)
 
 
+logger.debug("Initializing Program")
 file_loader = FileSystemLoader('templates')
 env = Environment(loader=file_loader)
 
@@ -26,16 +33,19 @@ output_dir = os.path.join(os.getcwd(), 'output')
 podcast = {}
 
 def download_audio_files():
+    logger.debug('  Downloading episode files')
     for episode in podcast['episodes']:
         download_audio_file(episode)
 
 def download_audio_file(episode):
+    logger.debug('          Downloading episode file')
     file_path = os.path.join(output_dir, podcast['rss']['channel']['slug'], 'audio', episode['file_name'])
     if not os.path.exists(file_path):
         r = requests.get(episode['enclosure']['@url'], allow_redirects=True)
         open(file_path, 'wb').write(r.content)
 
 def download_and_resize_cover_image():
+    logger.debug('  Downloading cover art')
     url = podcast['rss']['channel']['itunes:image']['@href']
     cover_art_path = os.path.join(output_dir, podcast['rss']['channel']['slug'], "cover_art.jpg")
     small_cover_art_path = os.path.join(output_dir, podcast['rss']['channel']['slug'], "small_cover_art.jpg")
@@ -49,11 +59,13 @@ def download_and_resize_cover_image():
 
 
 def make_slugs():
+    logger.debug('  Making slugs')
     podcast['rss']['channel']['slug'] = slugify(podcast['rss']['channel']['title'])
     for item in podcast['rss']['channel']['item']:
         item['slug'] = slugify(item['title'])
 
 def make_podcast_dirs():
+    logger.debug('  Making directories')
     dirs = ['audio', 'episode']
     dir_path = os.path.join(output_dir, podcast['rss']['channel']['slug'])
     if not os.path.exists(dir_path):
@@ -64,6 +76,7 @@ def make_podcast_dirs():
             os.makedirs(dir_path)
 
 def process_episodes():
+    logger.debug('  Processing episodes')
     global podcast
     podcast['episodes'] = []
     for item in podcast['rss']['channel']['item']:
@@ -76,8 +89,11 @@ def process_episodes():
 
 
 def process_podcast(url):
+    logger.info('Processing podcast with URL: ' + url) 
     global podcast
+    logger.debug('  Downloading RSS Feed') 
     r = requests.get(url)
+    logger.debug('  Parsing XML') 
     podcast = xmltodict.parse(r.text)
     make_slugs()
     process_episodes()
@@ -91,6 +107,7 @@ def process_podcast(url):
 
 
 def render_front_page():
+    logger.debug('  Rendering front page')
     frontpage_path = os.path.join(output_dir, podcast['rss']['channel']['slug'], "index.html")
     template = env.get_template('frontpage.html')
     output = template.render(podcast=podcast)
@@ -98,10 +115,12 @@ def render_front_page():
         f.write(output)
 
 def render_episodes():
+    logger.debug('  Rendering episode pages')
     for episode in podcast['episodes']:
         render_episode(episode)
 
 def render_episode(episode):
+    logger.debug('          Rendering episode page')
     episode_dir = os.path.join(output_dir, podcast['rss']['channel']['slug'], 'episode', episode['slug'])
     if not os.path.exists(episode_dir):
         os.makedirs(episode_dir)
@@ -115,19 +134,22 @@ def render_episode(episode):
         f.write(output)
 
 def save_feed(content):
+    logger.debug('  Saving RSS feed')
     file_path = os.path.join(output_dir, podcast['rss']['channel']['slug'], "rss.xml")
     open(file_path, 'wb').write(content)
 
 
 def compress_output():
+    logger.debug('  Compressing podccast')
     target_dir = file_path = os.path.join(podcast['rss']['channel']['slug'])
     file_name = podcast['rss']['channel']['slug'] + '.tar.gz'
     file_path = os.path.join(output_dir, file_name)
-    subprocess.call(['tar', '-C', output_dir, '-czvf', file_name, target_dir], cwd=output_dir)
-
+    subprocess.call(['tar', '-C', output_dir, '-czf', file_name, target_dir], cwd=output_dir)
 
 
 if __name__ == "__main__":
+    if args.verbose:
+        logger.setLevel(logging.DEBUG)
     process_podcast(args.url)
 
 
