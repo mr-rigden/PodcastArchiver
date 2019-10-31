@@ -1,0 +1,22 @@
+{% include 'top.html' %}
+<div id='main'>
+    <img id='cover-art' src="small_cover_art.jpg">
+    <h1 id='title'>{{ podcast['rss']['channel']['title'] }}</h1>
+    <p id='podcast-description'>{{ podcast['rss']['channel']['itunes:summary'] }}</p>
+
+    <div id='episode-list'>
+            <h2>Episodes</h2>
+            <ul class="center">
+
+                {% for item in podcast['rss']['channel']['item']  %}
+                    <li>
+                        <a href="episode/{{ item['slug'] }}/index.html">
+                            {{ item['title'] }}
+                        </a> 
+                    </li>
+                {% endfor %}
+
+
+            </ul>
+        </div>
+    {% include 'bottom.html' %}

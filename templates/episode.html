@@ -1,0 +1,17 @@
+{% include 'top.html' %}
+<div id='main'>
+    <a href="../../index.html">
+        <img id='cover-art' src="../../small_cover_art.jpg">
+    </a>
+
+
+    <h1 id='title'>{{episode['title'] }}</h1>
+    <audio controls preload="none">
+            <source src="../../audio/{{episode['file_name']}}" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+    <div class="episode-description">{{ episode['description']|safe }}</div>
+    <br>
+</div>
+
+{% include 'bottom.html' %}
