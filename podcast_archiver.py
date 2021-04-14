@@ -141,6 +141,7 @@ def save_feed(content):
 
 
 def compress_output():
+    return
     logger.debug('  Compressing podccast')
     target_dir = file_path = os.path.join(podcast['rss']['channel']['slug'])
     file_name = podcast['rss']['channel']['slug'] + '.tar.gz'
