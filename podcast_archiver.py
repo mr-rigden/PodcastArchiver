@@ -52,6 +52,7 @@ def download_and_resize_cover_image():
     response = requests.get(url, stream=True)
     response.raw.decode_content = True
     img = Image.open(response.raw)
+    img = img.convert('RGB')
     img.save(cover_art_path)
     img.thumbnail((1000, 1000))
     img.save(small_cover_art_path, optimize=True)
