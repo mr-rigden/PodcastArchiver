@@ -51,7 +51,10 @@ def download_and_resize_cover_image():
     small_cover_art_path = os.path.join(output_dir, podcast['rss']['channel']['slug'], "small_cover_art.jpg")
     response = requests.get(url, stream=True)
     response.raw.decode_content = True
-    img = Image.open(response.raw)
+    try:
+        img = Image.open(response.raw)
+    except: 
+        return
     img = img.convert('RGB')
     img.save(cover_art_path)
     img.thumbnail((1000, 1000))
